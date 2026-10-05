@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSIS SRMP Terintegrasi 39 Garut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#1a5632;--primary-light:#2d7a4f;--primary-dark:#0f3d22;
+  --accent:#f0a500;--danger:#dc3545;--success:#28a745;--info:#17a2b8;
+  --bg:#f0f4f2;--card:#fff;--text:#2c3e2e;--text-light:#6b7b6e;
+  --border:#d4e0d8;--shadow:0 2px 12px rgba(26,86,50,.08);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hidden{display:none!important}
+
+/* LOGIN */
+.login-container{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);padding:20px}
+.login-card{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  width:100%;max-width:420px;padding:40px;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .icon{width:72px;height:72px;background:var(--primary);border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px}
+.login-logo .icon i{font-size:32px;color:#fff}
+.login-logo h1{font-size:20px;color:var(--primary);font-weight:700}
+.login-logo p{font-size:13px;color:var(--text-light);margin-top:4px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.form-group input,.form-group select{width:100%;padding:11px 14px;border:2px solid var(--border);
+  border-radius:10px;font-size:14px;font-family:inherit;transition:border .2s;background:#fafcfb}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);background:#fff}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;
+  font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;
+  align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-light);transform:translateY(-1px)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#c82333}
+.btn-sm{padding:7px 14px;font-size:12px;width:auto}
+.btn-success{background:var(--success);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#fff}
+.login-footer{text-align:center;margin-top:20px;font-size:13px;color:var(--text-light)}
+.login-footer a{color:var(--primary);font-weight:600;text-decoration:none;cursor:pointer}
+
+/* APP */
+.app-container{display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--primary-dark);color:#fff;display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
+.sidebar-header{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-header h2{font-size:15px;font-weight:700}
+.sidebar-header p{font-size:11px;opacity:.7;margin-top:2px}
+.sidebar-nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;
+  transition:all .2s;font-size:13px;font-weight:500;color:rgba(255,255,255,.75)}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:var(--primary-light);color:#fff;border-right:3px solid var(--accent)}
+.nav-item i{width:20px;text-align:center;font-size:15px}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.user-info{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;
+  align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--primary-dark)}
+.user-info-text{font-size:12px}
+.user-info-text strong{display:block;font-size:13px}
+.user-info-text span{opacity:.7}
+.main-content{flex:1;margin-left:260px;padding:24px;min-height:100vh}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.topbar h1{font-size:22px;font-weight:700;color:var(--primary-dark)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.badge-role{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-pembina{background:#e8f5e9;color:var(--primary)}
+.badge-ketua{background:#fff3e0;color:#e65100}
+.badge-anggota{background:#e3f2fd;color:#1565c0}
+.menu-toggle{display:none;background:none;border:none;font-size:20px;color:var(--primary);cursor:pointer}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:16px}
+.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.stat-icon.green{background:#e8f5e9;color:var(--primary)}
+.stat-icon.orange{background:#fff3e0;color:#e65100}
+.stat-icon.blue{background:#e3f2fd;color:#1565c0}
+.stat-icon.red{background:#ffebee;color:var(--danger)}
+.stat-info h3{font-size:24px;font-weight:700}
+.stat-info p{font-size:12px;color:var(--text-light)}
+
+/* CARD */
+.card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;
+  justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.card-header h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-body{padding:20px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:#f8faf9}
+th{padding:12px 14px;text-align:left;font-weight:600;color:var(--text-light);
+  font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:#f8faf9}
+.actions{display:flex;gap:6px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;
+  align-items:center;justify-content:center;z-index:1000;padding:20px;animation:fadeIn .2s}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;
+  overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;
+  justify-content:space-between;align-items:center}
+.modal-header h3{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-light)}
+.modal-body{padding:22px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 22px;border-radius:10px;
+  color:#fff;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);
+  z-index:2000;animation:slideUp .3s ease;max-width:360px}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast-success{background:var(--success)}
+.toast-error{background:var(--danger)}
+.toast-info{background:var(--info)}
+
+/* ACTIVITY */
+.activity-list{list-style:none}
+.activity-item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:10px;height:10px;border-radius:50%;background:var(--primary-light);margin-top:5px;flex-shrink:0}
+.activity-content p{font-size:13px}
+.activity-content span{font-size:11px;color:var(--text-light)}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-light)}
+.empty-state i{font-size:40px;margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:14px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0}
+  .menu-toggle{display:block}
+  .topbar h1{font-size:18px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .login-card{padding:28px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginPage" class="login-container">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <h1>OSIS SRMP 39 Garut</h1>
+      <p>Sekolah Rakyat Terintegrasi 39 Garut</p>
+    </div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="Masukkan email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Masukkan password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-sign-in-alt"></i> Masuk
+      </button>
+    </form>
+    <div class="login-footer">
+      Belum punya akun? <a onclick="showRegister()">Daftar di sini</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REGISTER ============ -->
+<div id="registerPage" class="login-container hidden">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon"><i class="fas fa-user-plus"></i></div>
+      <h1>Daftar Akun OSIS</h1>
+      <p>Lengkapi data diri Anda</p>
+    </div>
+    <form id="registerForm">
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Nama lengkap" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="Email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label>Kelas</label>
+        <select id="regClass" required>
+          <option value="">Pilih Kelas</option>
+          <option value="7A">7A</option><option value="7B">7B</option>
+          <option value="8A">8A</option><option value="8B">8B</option>
+          <option value="9A">9A</option><option value="9B">9B</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-user-plus"></i> Daftar
+      </button>
+    </form>
+    <div class="login-footer">
+      Sudah punya akun? <a onclick="showLogin()">Masuk di sini</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="appPage" class="app-container hidden">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-users"></i> OSIS SRMP</h2>
+      <p>Terintegrasi 39 Garut</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </div>
+      <div class="nav-item" data-page="users" onclick="navigateTo('users')">
+        <i class="fas fa-user-friends"></i> Manajemen Anggota
+      </div>
+      <div class="nav-item" data-page="kegiatan" onclick="navigateTo('kegiatan')">
+        <i class="fas fa-calendar-alt"></i> Program Kerja
+      </div>
+      <div class="nav-item" data-page="pengumuman" onclick="navigateTo('pengumuman')">
+        <i class="fas fa-bullhorn"></i> Pengumuman
+      </div>
+      <div class="nav-item" data-page="profil" onclick="navigateTo('profil')">
+        <i class="fas fa-user-cog"></i> Profil Saya
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar" id="sidebarAvatar">A</div>
+        <div class="user-info-text">
+          <strong id="sidebarName">-</strong>
+          <span id="sidebarRole">-</span>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" style="width:100%;color:#fff;border-color:rgba(255,255,255,.3)" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="badge-role" id="topbarRole">-</span>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="page-dashboard" class="page">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="card">
+        <div class="card-header"><h2><i class="fas fa-clock"></i> Aktivitas Terbaru</h2></div>
+        <div class="card-body"><ul class="activity-list" id="activityList"></ul></div>
+      </div>
+    </div>
+
+    <!-- Users -->
+    <div id="page-users" class="page hidden">
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-user-friends"></i> Manajemen Anggota OSIS</h2>
+          <button class="btn btn-primary btn-sm" onclick="openAddUserModal()" id="btnAddUser">
+            <i class="fas fa-plus"></i> Tambah Anggota
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th><th>Nama</th><th>Email</th><th>Kelas</th>
+                  <th>Jabatan</th><th>Bergabung</th><th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kegiatan -->
+    <div id="page-kegiatan" class="page hidden">
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-calendar-alt"></i> Program Kerja OSIS</h2>
+          <button class="btn btn-primary btn-sm" onclick="openAddKegiatanModal()" id="btnAddKegiatan">
+            <i class="fas fa-plus"></i> Tambah Kegiatan
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>No</th><th>Nama Kegiatan</th><th>Tanggal</th><th>Status</th><th>Deskripsi</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="kegiatanTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pengumuman -->
+    <div id="page-pengumuman" class="page hidden">
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-bullhorn"></i> Pengumuman</h2>
+          <button class="btn btn-primary btn-sm" onclick="openAddPengumumanModal()" id="btnAddPengumuman">
+            <i class="fas fa-plus"></i> Buat Pengumuman
+          </button>
+        </div>
+        <div class="card-body" id="pengumumanList"></div>
+      </div>
+    </div>
+
+    <!-- Profil -->
+    <div id="page-profil" class="page hidden">
+      <div class="card">
+        <div class="card-header"><h2><i class="fas fa-user-cog"></i> Profil Saya</h2></div>
+        <div class="card-body">
+          <div class="form-group"><label>Nama Lengkap</label><input type="text" id="profilName" disabled></div>
+          <div class="form-group"><label>Email</label><input type="email" id="profilEmail" disabled></div>
+          <div class="form-group"><label>Kelas</label><input type="text" id="profilClass" disabled></div>
+          <div class="form-group"><label>Jabatan</label><input type="text" id="profilRole" disabled></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ MODALS ============ -->
+<!-- Add User Modal -->
+<div id="modalUser" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalUserTitle">Tambah Anggota</h3>
+      <button class="modal-close" onclick="closeModal('modalUser')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="modalUserName" placeholder="Nama lengkap"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="modalUserEmail" placeholder="Email"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="modalUserPassword" placeholder="Minimal 6 karakter"></div>
+      <div class="form-group"><label>Kelas</label>
+        <select id="modalUserClass">
+          <option value="">Pilih Kelas</option>
+          <option value="7A">7A</option><option value="7B">7B</option>
+          <option value="8A">8A</option><option value="8B">8B</option>
+          <option value="9A">9A</option><option value="9B">9B</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Jabatan</label>
+        <select id="modalUserRole">
+          <option value="anggota">Anggota</option>
+          <option value="ketua">Ketua OSIS</option>
+          <option value="pembina">Pembina OSIS</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modalUser')">Batal</button>
+      <button class="btn btn-primary btn-sm" onclick="saveUser()" id="btnSaveUser">
+        <i class="fas fa-save"></i> Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Kegiatan Modal -->
+<div id="modalKegiatan" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Tambah Kegiatan</h3>
+      <button class="modal-close" onclick="closeModal('modalKegiatan')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="modalKegiatanName" placeholder="Nama kegiatan"></div>
+      <div class="form-group"><label>Tanggal</label><input type="date" id="modalKegiatanDate"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="modalKegiatanStatus">
+          <option value="Direncanakan">Direncanakan</option>
+          <option value="Berlangsung">Berlangsung</option>
+          <option value="Selesai">Selesai</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Deskripsi</label><textarea id="modalKegiatanDesc" rows="3" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modalKegiatan')">Batal</button>
+      <button class="btn btn-primary btn-sm" onclick="saveKegiatan()"><i class="fas fa-save"></i> Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Pengumuman Modal -->
+<div id="modalPengumuman" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Buat Pengumuman</h3>
+      <button class="modal-close" onclick="closeModal('modalPengumuman')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Judul</label><input type="text" id="modalPengumumanTitle" placeholder="Judul pengumuman"></div>
+      <div class="form-group"><label>Isi Pengumuman</label><textarea id="modalPengumumanBody" rows="4" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modalPengumuman')">Batal</button>
+      <button class="btn btn-primary btn-sm" onclick="savePengumuman()"><i class="fas fa-save"></i> Kirim</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+/* ============================================================
+   KONFIGURASI FIREBASE — GANTI DENGAN PUNYA ANDA
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSy...GANTI_DENGAN_API_KEY_ANDA",
+  authDomain: "osis-srmp39.firebaseapp.com",
+  databaseURL: "https://osis-srmp39-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "osis-srmp39",
+  storageBucket: "osis-srmp39.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentUser = null;
+let currentUserData = null;
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+function showLogin() {
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('registerPage').classList.add('hidden');
+}
+function showRegister() {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('registerPage').classList.remove('hidden');
+}
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+/* ============================================================
+   AUTH — REGISTER
+   ============================================================ */
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const kelas = document.getElementById('regClass').value;
+
+  if (!name || !email || !password || !kelas) {
+    toast('Semua field harus diisi!', 'error'); return;
+  }
+
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
+    // Simpan data user ke Realtime Database
+    await db.ref('users/' + cred.user.uid).set({
+      name, email, kelas,
+      role: 'anggota',
+      createdAt: new Date().toISOString()
+    });
+    toast('Registrasi berhasil! Silakan login.', 'success');
+    showLogin();
+  } catch (err) {
+    toast('Gagal daftar: ' + err.message, 'error');
+  }
+});
+
+/* ============================================================
+   AUTH — LOGIN
+   ============================================================ */
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    toast('Login berhasil!', 'success');
+  } catch (err) {
+    toast('Login gagal: ' + err.message, 'error');
+  }
+});
+
+/* ============================================================
+   AUTH STATE
+   ============================================================ */
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = user;
+    const snap = await db.ref('users/' + user.uid).get();
+    currentUserData = snap.exists() ? snap.val() : { name: user.email, role: 'anggota', kelas: '-' };
+    currentUserData.uid = user.uid;
+
+    // Update UI
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('registerPage').classList.add('hidden');
+    document.getElementById('appPage').classList.remove('hidden');
+
+    document.getElementById('sidebarName').textContent = currentUserData.name;
+    document.getElementById('sidebarRole').textContent = roleLabel(currentUserData.role);
+    document.getElementById('sidebarAvatar').textContent = (currentUserData.name || 'A')[0].toUpperCase();
+
+    const badge = document.getElementById('topbarRole');
+    badge.textContent = roleLabel(currentUserData.role);
+    badge.className = 'badge-role ' + (
+      currentUserData.role === 'pembina' ? 'badge-pembina' :
+      currentUserData.role === 'ketua' ? 'badge-ketua' : 'badge-anggota'
+    );
+
+    // Tampilkan/sembunyikan tombol berdasarkan role
+    applyPermissions();
+
+    // Load data
+    loadUsers();
+    loadKegiatan();
+    loadPengumuman();
+    updateDashboard();
+  } else {
+    currentUser = null; currentUserData = null;
+    document.getElementById('loginPage').classList.remove('hidden');
+    document.getElementById('appPage').classList.add('hidden');
+    document.getElementById('registerPage').classList.add('hidden');
+  }
+});
+
+function roleLabel(role) {
+  if (role === 'pembina') return 'Pembina OSIS';
+  if (role === 'ketua') return 'Ketua OSIS';
+  return 'Anggota';
+}
+
+/* ============================================================
+   PERMISSIONS / PRIVILEGE
+   ============================================================ */
+function applyPermissions() {
+  const role = currentUserData?.role || 'anggota';
+
+  // Tombol tambah user: hanya pembina
+  document.getElementById('btnAddUser').style.display = role === 'pembina' ? 'flex' : 'none';
+
+  // Tombol tambah kegiatan: pembina & ketua
+  document.getElementById('btnAddKegiatan').style.display =
+    (role === 'pembina' || role === 'ketua') ? 'flex' : 'none';
+
+  // Tombol pengumuman: pembina & ketua
+  document.getElementById('btnAddPengumuman').style.display =
+    (role === 'pembina' || role === 'ketua') ? 'flex' : 'none';
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page-' + page).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+
+  const titles = { dashboard: 'Dashboard', users: 'Manajemen Anggota',
+    kegiatan: 'Program Kerja', pengumuman: 'Pengumuman', profil: 'Profil Saya' };
+  document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
+
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+
+  if (page === 'profil') fillProfil();
+}
+
+function fillProfil() {
+  if (!currentUserData) return;
+  document.getElementById('profilName').value = currentUserData.name || '-';
+  document.getElementById('profilEmail').value = currentUserData.email || '-';
+  document.getElementById('profilClass').value = currentUserData.kelas || '-';
+  document.getElementById('profilRole').value = roleLabel(currentUserData.role);
+}
+
+/* ============================================================
+   LOAD USERS
+   ============================================================ */
+let usersCache = [];
+async function loadUsers() {
+  const snap = await db.ref('users').get();
+  usersCache = [];
+  const tbody = document.getElementById('usersTableBody');
+  tbody.innerHTML = '';
+
+  if (!snap.exists()) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-users"></i><p>Belum ada anggota</p></div></td></tr>';
+    return;
+  }
+
+  let idx = 0;
+  snap.forEach(child => {
+    idx++;
+    const u = child.val();
+    u.uid = child.key;
+    usersCache.push(u);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${idx}</td>
+      <td><strong>${esc(u.name || '-')}</strong></td>
+      <td>${esc(u.email || '-')}</td>
+      <td>${esc(u.kelas || '-')}</td>
+      <td><span class="badge-role ${u.role === 'pembina' ? 'badge-pembina' : u.role === 'ketua' ? 'badge-ketua' : 'badge-anggota'}">${roleLabel(u.role)}</span></td>
+      <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('id-ID') : '-'}</td>
+      <td class="actions">
+        ${currentUserData.role === 'pembina' ? `
+          <button class="btn btn-outline btn-sm" onclick="editUser('${child.key}')"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteUser('${child.key}','${esc(u.name)}')"><i class="fas fa-trash"></i></button>
+        ` : '-'}
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+/* ============================================================
+   USER CRUD (PEMBINA ONLY)
+   ============================================================ */
+let editingUserId = null;
+
+function openAddUserModal() {
+  editingUserId = null;
+  document.getElementById('modalUserTitle').textContent = 'Tambah Anggota';
+  document.getElementById('modalUserName').value = '';
+  document.getElementById('modalUserEmail').value = '';
+  document.getElementById('modalUserPassword').value = '';
+  document.getElementById('modalUserPassword').disabled = false;
+  document.getElementById('modalUserClass').value = '';
+  document.getElementById('modalUserRole').value = 'anggota';
+  document.getElementById('modalUser').classList.remove('hidden');
+}
+
+async function editUser(uid) {
+  if (currentUserData.role !== 'pembina') { toast('Hanya Pembina yang bisa mengedit', 'error'); return; }
+  const snap = await db.ref('users/' + uid).get();
+  if (!snap.exists()) return;
+  const u = snap.val();
+  editingUserId = uid;
+  document.getElementById('modalUserTitle').textContent = 'Edit Anggota';
+  document.getElementById('modalUserName').value = u.name || '';
+  document.getElementById('modalUserEmail').value = u.email || '';
+  document.getElementById('modalUserPassword').value = '';
+  document.getElementById('modalUserPassword').disabled = true;
+  document.getElementById('modalUserClass').value = u.kelas || '';
+  document.getElementById('modalUserRole').value = u.role || 'anggota';
+  document.getElementById('modalUser').classList.remove('hidden');
+}
+
+async function saveUser() {
+  if (currentUserData.role !== 'pembina') { toast('Akses ditolak', 'error'); return; }
+
+  const name = document.getElementById('modalUserName').value.trim();
+  const email = document.getElementById('modalUserEmail').value.trim();
+  const password = document.getElementById('modalUserPassword').value;
+  const kelas = document.getElementById('modalUserClass').value;
+  const role = document.getElementById('modalUserRole').value;
+
+  if (!name || !email) { toast('Nama dan email wajib diisi', 'error'); return; }
+
+  try {
+    if (editingUserId) {
+      // UPDATE
+      await db.ref('users/' + editingUserId).update({ name, email, kelas, role });
+      toast('Data anggota diperbarui', 'success');
+    } else {
+      // CREATE baru via secondary auth
+      if (!password || password.length < 6) { toast('Password minimal 6 karakter', 'error'); return; }
+      const secondaryApp = firebase.initializeApp(firebaseConfig, 'Secondary' + Date.now());
+      const secondaryAuth = secondaryApp.auth();
+      const cred = await secondaryAuth.createUserWithEmailAndPassword(email, password);
+      await db.ref('users/' + cred.user.uid).set({
+        name, email, kelas, role,
+        createdAt: new Date().toISOString()
+      });
+      await secondaryApp.delete();
+      toast('Anggota baru berhasil ditambahkan', 'success');
+    }
+    closeModal('modalUser');
+    loadUsers();
+    updateDashboard();
+  } catch (err) {
+    toast('Gagal: ' + err.message, 'error');
+  }
+}
+
+async function deleteUser(uid, name) {
+  if (currentUserData.role !== 'pembina') { toast('Hanya Pembina yang bisa menghapus', 'error'); return; }
+  if (!confirm(`Yakin ingin menghapus "${name}" dari OSIS?`)) return;
+  try {
+    await db.ref('users/' + uid).remove();
+    toast('Anggota dihapus', 'success');
+    loadUsers();
+    updateDashboard();
+  } catch (err) {
+    toast('Gagal menghapus: ' + err.message, 'error');
+  }
+}
+
+/* ============================================================
+   KEGIATAN
+   ============================================================ */
+async function loadKegiatan() {
+  const snap = await db.ref('kegiatan').get();
+  const tbody = document.getElementById('kegiatanTableBody');
+  tbody.innerHTML = '';
+  if (!snap.exists()) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-calendar-alt"></i><p>Belum ada kegiatan</p></div></td></tr>';
+    return;
+  }
+  let idx = 0;
+  const canEdit = currentUserData.role === 'pembina' || currentUserData.role === 'ketua';
+  snap.forEach(child => {
+    idx++;
+    const k = child.val();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${idx}</td>
+      <td><strong>${esc(k.name)}</strong></td>
+      <td>${k.date ? new Date(k.date).toLocaleDateString('id-ID') : '-'}</td>
+      <td><span class="badge-role ${k.status === 'Selesai' ? 'badge-pembina' : k.status === 'Berlangsung' ? 'badge-ketua' : 'badge-anggota'}">${k.status}</span></td>
+      <td>${esc(k.desc || '-')}</td>
+      <td class="actions">${canEdit ? `<button class="btn btn-danger btn-sm" onclick="deleteKegiatan('${child.key}')"><i class="fas fa-trash"></i></button>` : '-'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function openAddKegiatanModal() {
+  if (!(currentUserData.role === 'pembina' || currentUserData.role === 'ketua')) {
+    toast('Akses ditolak', 'error'); return;
+  }
+  document.getElementById('modalKegiatanName').value = '';
+  document.getElementById('modalKegiatanDate').value = '';
+  document.getElementById('modalKegiatanStatus').value = 'Direncanakan';
+  document.getElementById('modalKegiatanDesc').value = '';
+  document.getElementById('modalKegiatan').classList.remove('hidden');
+}
+
+async function saveKegiatan() {
+  const name = document.getElementById('modalKegiatanName').value.trim();
+  if (!name) { toast('Nama kegiatan wajib diisi', 'error'); return; }
+  await db.ref('kegiatan').push({
+    name,
+    date: document.getElementById('modalKegiatanDate').value,
+    status: document.getElementById('modalKegiatanStatus').value,
+    desc: document.getElementById('modalKegiatanDesc').value.trim(),
+    createdBy: currentUser.uid,
+    createdAt: new Date().toISOString()
+  });
+  toast('Kegiatan ditambahkan', 'success');
+  closeModal('modalKegiatan');
+  loadKegiatan();
+}
+
+async function deleteKegiatan(id) {
+  if (!(currentUserData.role === 'pembina' || currentUserData.role === 'ketua')) return;
+  if (!confirm('Hapus kegiatan ini?')) return;
+  await db.ref('kegiatan/' + id).remove();
+  toast('Kegiatan dihapus', 'success');
+  loadKegiatan();
+}
+
+/* ============================================================
+   PENGUMUMAN
+   ============================================================ */
+async function loadPengumuman() {
+  const snap = await db.ref('pengumuman').orderByChild('createdAt').limitToLast(20).get();
+  const container = document.getElementById('pengumumanList');
+  container.innerHTML = '';
+  if (!snap.exists()) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-bullhorn"></i><p>Belum ada pengumuman</p></div>';
+    return;
+  }
+  const items = [];
+  snap.forEach(c => items.push({ id: c.key, ...c.val() }));
+  items.reverse().forEach(p => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:16px;border:1px solid var(--border);border-radius:10px;margin-bottom:12px';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong style="font-size:14px"><i class="fas fa-bullhorn" style="color:var(--accent)"></i> ${esc(p.title)}</strong>
+        <small style="color:var(--text-light)">${new Date(p.createdAt).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})}</small>
+      </div>
+      <p style="font-size:13px;color:var(--text-light);line-height:1.6">${esc(p.body)}</p>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-light)">oleh: ${esc(p.author)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function openAddPengumumanModal() {
+  if (!(currentUserData.role === 'pembina' || currentUserData.role === 'ketua')) {
+    toast('Akses ditolak', 'error'); return;
+  }
+  document.getElementById('modalPengumumanTitle').value = '';
+  document.getElementById('modalPengumumanBody').value = '';
+  document.getElementById('modalPengumuman').classList.remove('hidden');
+}
+
+async function savePengumuman() {
+  const title = document.getElementById('modalPengumumanTitle').value.trim();
+  const body = document.getElementById('modalPengumumanBody').value.trim();
+  if (!title || !body) { toast('Judul dan isi wajib diisi', 'error'); return; }
+  await db.ref('pengumuman').push({
+    title, body,
+    author: currentUserData.name,
+    createdAt: new Date().toISOString()
+  });
+  toast('Pengumuman dikirim', 'success');
+  closeModal('modalPengumuman');
+  loadPengumuman();
+}
+
+/* ============================================================
+   DASHBOARD STATS
+   ============================================================ */
+async function updateDashboard() {
+  const usersSnap = await db.ref('users').get();
+  let total = 0, ketua = 0, pembina = 0, anggota = 0;
+  if (usersSnap.exists()) {
+    usersSnap.forEach(c => {
+      total++;
+      const r = c.val().role;
+      if (r === 'ketua') ketua++;
+      else if (r === 'pembina') pembina++;
+      else anggota++;
+    });
+  }
+  const kegSnap = await db.ref('kegiatan').get();
+  const totalKeg = kegSnap.exists() ? kegSnap.numChildren() : 0;
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-users"></i></div>
+      <div class="stat-info"><h3>${total}</h3><p>Total Anggota</p></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-crown"></i></div>
+      <div class="stat-info"><h3>${ketua}</h3><p>Ketua OSIS</p></div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-user-tie"></i></div>
+      <div class="stat-info"><h3>${pembina}</h3><p>Pembina</p></div></div>
+    <div class="stat-card"><div class="stat-icon red"><i class="fas fa-calendar-check"></i></div>
+      <div class="stat-info"><h3>${totalKeg}</h3><p>Program Kerja</p></div></div>`;
+
+  // Activity
+  const actEl = document.getElementById('activityList');
+  const acts = [];
+  if (usersSnap.exists()) {
+    usersSnap.forEach(c => {
+      const u = c.val();
+      if (u.createdAt) acts.push({ text: `<strong>${esc(u.name)}</strong> bergabung sebagai ${roleLabel(u.role)}`, time: u.createdAt });
+    });
+  }
+  if (kegSnap.exists()) {
+    kegSnap.forEach(c => {
+      const k = c.val();
+      if (k.createdAt) acts.push({ text: `Kegiatan <strong>${esc(k.name)}</strong> ditambahkan`, time: k.createdAt });
+    });
+  }
+  acts.sort((a, b) => new Date(b.time) - new Date(a.time));
+  actEl.innerHTML = acts.slice(0, 8).map(a =>
+    `<li class="activity-item"><div class="activity-dot"></div>
+      <div class="activity-content"><p>${a.text}</p>
+      <span>${new Date(a.time).toLocaleString('id-ID')}</span></div></li>`
+  ).join('') || '<li class="empty-state"><p>Belum ada aktivitas</p></li>';
+}
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+async function logout() {
+  if (!confirm('Yakin ingin keluar?')) return;
+  await auth.signOut();
+  toast('Berhasil keluar', 'info');
+}
+</script>
+</body>
+</html>
